@@ -1,0 +1,14 @@
+function [vectors] = convertToVectors(I, F)
+    % takes an image I and a set of features F
+    % Returns: a java arraylist where every index contains a size by 3
+    % matrix. This matrix is the pixel va
+    vectors = java.util.ArrayList();
+    for i = 1 : size(F, 1)
+        % x y size theta
+        xc = F(i, 1);
+        yc = F(i, 2);
+        s = floor(F(i, 3));
+        theta = F(i,4);
+        vectors.add( convertFeature(I, xc, yc, theta, s) );
+    end
+end
