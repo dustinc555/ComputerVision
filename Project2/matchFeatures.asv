@@ -1,4 +1,4 @@
-function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold)
+function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold, sliceSize)
     % given two untampered images I1, I2
     % this function returns an arraylist consisting of feature pairs
     % maxDistance - the allowable amount of difference two features may
@@ -11,16 +11,18 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
     f2 = harrisDetection(I2, baseSigma, 20, threshold);
     
     
-    indices = find(f1(:,1));
-    indices = indices + find(f2(:,2) > CT);
+    indices = find(f1(:,1) < CT);
+    f1(indices,:) = [];
+    indices = find(f1(:,2) < CT);
     f1(indices,:) = [];
     
-    indices = find(f2(:,1) > CT || f2(:,2) > CT);
-    indices = indices + find(f2(:,2) > CT);
-    f1(indices,:) = [];
+    indices = find(f2(:,1) < CT);
+    f2(indices,:) = [];
+    indices = find(f2(:,2) < CT);
+    f2(indices,:) = [];
     
-    v1 = convertToVectors(I1, f1);
-    v2 = convertToVectors(I2, f2);
+    v1 = convertToVectors(I1, f1, sliceSize);
+    v2 = convertToVectors(I2, f2, sliceSize);
     
     matches = java.util.ArrayList();
     
@@ -30,34 +32,21 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
     % if the minSSD is allowable, 
     % match them
     for i = 0 : v1.size() - 1
+        minSDD = intmax;
+        minMatch = [];
         vec1 = v1.get(i);
         if (v2.size() > 0) % wouldnt make sense to run with no values
-            minSDD = SDD(vec1, v2.get(0));
-            minMatch = [f1(1, :) ; f2(1, :)];
-            minMatchID = 0;
-            for j = 1 : v2.size() - 1
-                newSDD = SDD(vec1, v2.get(j));
-                if minSDD > newSDD 
-                    % pair them
-                    minSDD = newSDD;
-                    minMatch = [f1(i+1,:) ; f2(j,:)];
-                    minMatchID = j;
-                    j
-                end
-            end
+            
             
             % now that we have the minSSD
             % if it is within our allowable distance
             % make the match
-            if minSDD < maxDistance
+            if isempty(minMatch) == false
                 matches.add(minMatch);
                 %v2.remove(minMatchID);
             end
         end
+        
+        
     end
-
-    % filter corners
-    keeps = java.util.ArrayList();
-    
-    matches = keeps;
 end

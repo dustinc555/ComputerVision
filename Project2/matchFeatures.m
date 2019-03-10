@@ -32,15 +32,17 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
     % if the minSSD is allowable, 
     % match them
     for i = 0 : v1.size() - 1
-        minSDD = intmax;
+        minSSD = intmax;
+        prevMinSSD = intmax;
         minMatch = [];
         vec1 = v1.get(i);
         if (v2.size() > 0) % wouldnt make sense to run with no values
             for j = 0 : v2.size() - 1
-                newSDD = SDD(vec1, v2.get(j));
-                if minSDD > newSDD && newSDD <= maxDistance
+                newSSD = SSD(vec1, v2.get(j));
+                if minSSD > newSSD
                     % pair them
-                    minSDD = newSDD;
+                    prevMinSSD = minSSD;
+                    minSSD = newSSD;
                     minMatch = [f1(i+1,:) ; f2(j + 1,:)];
                 end
             end
@@ -48,7 +50,7 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
             % now that we have the minSSD
             % if it is within our allowable distance
             % make the match
-            if isempty(minMatch) == false
+            if isempty(minMatch) == false && (minSSD / prevMinSSD) < maxDistance
                 matches.add(minMatch);
                 %v2.remove(minMatchID);
             end
