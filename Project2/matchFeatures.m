@@ -3,14 +3,18 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
     % this function returns an arraylist consisting of feature pairs
     % maxDistance - the allowable amount of difference two features may
     % have to be considered matching
-    % CT - Corner feature threshold, how far away does it have to be from
-    % the corners.
+    % CT - Corner threshold, how far away does it have to be from
+    % the corners because, normally, features close to the outter corners
+    % are bad.
     
-    
+    % the 20 here is arbitrary, we dont actually care about drawing
+    % these features 
     f1 = harrisDetection(I1, baseSigma, 20, threshold);
     f2 = harrisDetection(I2, baseSigma, 20, threshold);
     
     
+    % filter out corners of image%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % there is probably a better way to do this.
     indices = find(f1(:,1) < CT);
     f1(indices,:) = [];
     indices = find(f1(:,2) < CT);
@@ -20,6 +24,23 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
     f2(indices,:) = [];
     indices = find(f2(:,2) < CT);
     f2(indices,:) = [];
+    
+    maxX = size(I1, 1) - CT;
+    maxY = size(I1, 2) - CT;
+    
+    indices = find(f1(:,1) > maxX);
+    f1(indices,:) = [];
+    indices = find(f1(:,2) > maxY);
+    f1(indices,:) = [];
+    
+    maxX = size(I2, 1) - CT;
+    maxY = size(I2, 2) - CT;
+    
+    indices = find(f2(:,1) > maxX);
+    f2(indices,:) = [];
+    indices = find(f2(:,2) > maxY);
+    f2(indices,:) = [];
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     v1 = convertToVectors(I1, f1, sliceSize);
     v2 = convertToVectors(I2, f2, sliceSize);
@@ -55,7 +76,5 @@ function [matches] = matchFeatures(I1, I2, maxDistance, CT, baseSigma, threshold
                 %v2.remove(minMatchID);
             end
         end
-        
-        
     end
 end
