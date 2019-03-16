@@ -1,0 +1,4 @@
+function [T] = testRunner(img, n, small, maxKernel)
+    % run testFilterTime for 1x1 to maxKernel
+    
+end

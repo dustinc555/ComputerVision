@@ -1,0 +1,18 @@
+function testFilterTime(img, n, small, kernels)
+
+    %J = imresize(I,scale)
+    %J = imresize(I,[numrows numcols])
+    
+    rowSize = size(img, 1);
+    colSize = size(img, 2);
+    
+    qr = small(1);
+    qc = small(2);
+    
+    kr = (rowSize - qr) / n; % amount to decrease rowsize by
+    kc = (colSize - qc) / n;
+    
+    for i = 1 : size(kernels)
+        
+    end
+end

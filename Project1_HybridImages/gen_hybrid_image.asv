@@ -1,0 +1,19 @@
+
+function [H] = gen_hybrid_image(highFreqImg, lowFreqImg, sigmaHigh, sigmaLow)
+    s1 = size(highFreqImg);
+    s2 = size(lowFreqImg);
+    maxRow = max(s1(1), s2(1));
+    maxCol = max(s2(2), s2(2));
+    
+    Base = zeros(maxRow, maxCol, 3);
+    
+    highFreqImg = Base(1:s1(1)) + highFreqImg;
+    lowFreqImg = Base + lowFreqImg;
+
+    highFreqImg = fft2(highFreqImg);
+    lowFreqImg = fft2(lowFreqImg);
+    highFreqImg = fftshift(highFreqImg);
+    lowFreqImg = fftshift(lowFreqImg);
+    FFT_COMBINED = highPass(highFreqImg, sigmaHigh) + lowPass(lowFreqImg, sigmaLow);
+    H = uint8( ifft2( ifftshift( FFT_COMBINED ) ) );
+end
