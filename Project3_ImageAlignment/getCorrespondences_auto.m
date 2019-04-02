@@ -20,6 +20,9 @@ function [m1, m2] = getCorrespondences_auto(I1, I2, n)
     
     % randperm(n, k)
     % returns a row vector containing k unique integers from 1 to n
+    if (size(matchedPoints1, 1) < 4)
+       error('Could not detect enough features...'); 
+    end
     p = randperm(size(matchedPoints1, 1), n);
     
     m1 = matchedPoints1(p).Location;

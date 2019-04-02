@@ -27,5 +27,4 @@ function [m1, m2] = getCorrespondences_manual(I1, I2, n)
         points.add(p); % append
     end
     close all;
-    
 end
