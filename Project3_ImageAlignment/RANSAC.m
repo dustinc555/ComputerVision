@@ -14,18 +14,18 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, minThresh)
        [m1, m2] = getCorrespondences_auto(I1, I2, 4);
        
        % warp
-       [W_new, WLEFT, WRIGHT] = overlay(I1, I2, m1, m2);
-       WLEFT = double(WLEFT);
-       WRIGHT = double(WRIGHT);
+       [W_new, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2);
        
-       current_error = getImgDiff(WLEFT, WRIGHT);
-       %current_error
-       %currentTotal = currentTotal + current_error;
-       
-       
-       % assign max of inliers
-       if best_error > current_error %&& minThresh > current_error
-          W = W_new; 
+       if valid
+           WLEFT = double(WLEFT);
+           WRIGHT = double(WRIGHT);
+
+           current_error = getImgDiff(WLEFT, WRIGHT);
+
+           % assign max of inliers
+           if best_error > current_error %&& minThresh > current_error
+              W = W_new; 
+           end
        end
     end
     
@@ -33,6 +33,6 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, minThresh)
     WLEFT = uint8(WLEFT);    
     
     if (isempty(W))
-        error("Could not find a warp allowable with the given threshold.");
+        error("Could not find a warp allowable within the thresholds.");
     end
 end
