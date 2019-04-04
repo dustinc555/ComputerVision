@@ -1,4 +1,4 @@
-function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, minThresh)
+function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, allowed_image_error, allowed_mapping_error)
     %% check n different homography's selected at random
 
     best_error = inf;
@@ -14,7 +14,7 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, minThresh)
        [m1, m2] = getCorrespondences_auto(I1, I2, 4);
        
        % warp
-       [W_new, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2);
+       [W_new, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2, allowed_mapping_error, 'a');
        
        if valid
            WLEFT = double(WLEFT);
@@ -23,7 +23,7 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, minThresh)
            current_error = getImgDiff(WLEFT, WRIGHT);
 
            % assign max of inliers
-           if best_error > current_error %&& minThresh > current_error
+           if best_error > current_error && allowed_image_error > current_error
               W = W_new; 
            end
        end

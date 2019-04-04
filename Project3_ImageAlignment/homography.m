@@ -6,7 +6,7 @@ function [H] = homography(m1, m2)
     A = constructA(m1, m2); % get A matrix from m values 
     
     if n == 4
-       H = null(A); 
+       H = null(A);
     else
        [U, S, V] = svd(A);
        H = V(:, 9);

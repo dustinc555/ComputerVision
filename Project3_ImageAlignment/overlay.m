@@ -1,4 +1,4 @@
-function [W, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2)
+function [W, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2, allowed_error, mode)
     %% get homography for warping m2 with respect to m1 space
     H = homography(m1, m2);
     W = [];
@@ -7,25 +7,25 @@ function [W, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2)
     valid = true;
     
     %% validate homography
-    % m2 points should transform acceptably close to m1 points
-    allowed_error = 20;
-    
-    x1 = double([m2(1, :)' ; 1]);
-    x2 = double([m2(1, :)' ; 1]);
-    
-    % transform points
-    x1 = H * x1;
-    x2 = H * x2;
-    
-    % see if they are within the allowable error
-    % if there is a difference above the threshold, abandon this
-    % transform.
-    x1_prime = double([m1(1, :)' ; 1]);
-    x2_prime = double([m1(1, :)' ; 1]);
-    valid = (~any(abs((x1 - x1_prime) ./ 2) > allowed_error)) && (~any(abs((x2 - x2_prime) ./ 2) > allowed_error));
-    
-    if (~valid)
-        return;
+    if (mode == 'a')
+        % m2 points should transform acceptably close to m1 points
+        x1 = double([m2(1, :)' ; 1]);
+        x2 = double([m2(1, :)' ; 1]);
+
+        % transform points
+        x1 = H * x1;
+        x2 = H * x2;
+
+        % see if they are within the allowable error
+        % if there is a difference above the threshold, abandon this
+        % transform.
+        x1_prime = double([m1(1, :)' ; 1]);
+        x2_prime = double([m1(1, :)' ; 1]);
+        valid = (~any(abs((x1 - x1_prime) ./ 2) > allowed_error)) && (~any(abs((x2 - x2_prime) ./ 2) > allowed_error));
+
+        if (~valid)
+            return;
+        end
     end
     %% make enlarged image plane W to overlay images onto
     w_height = max(size(I1, 1), size(I2, 1));
