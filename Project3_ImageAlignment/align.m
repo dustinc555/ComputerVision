@@ -2,17 +2,17 @@ function [W, WLEFT, WRIGHT] = align(I1, I2, mode)
     %% set parameters
     % if mode is auto, this is how many times 
     % to RANSAC the homography
-    trials = 100;
+    trials = 500;
     
-    % max distance the warped image can be from the 
+    % max difference the warped image can be from the 
     % image being warped to
-    allowed_image_error = realmax;
+    allowed_image_error = inf;
     
-    % 1 -> 100% error in point mapping
+    % error in point mapping
     % the error can be high and still fairly accurate if the image is large
     % having too small of a number may cause the algorithm to not find
     % acceptable warps
-    allowed_maping_error = 15;
+    allowed_maping_error = .7;
     
     %% act on mode
     if mode == 'a'
@@ -26,4 +26,5 @@ function [W, WLEFT, WRIGHT] = align(I1, I2, mode)
     end
     %% correct triangular gaps in image 
     W = fillGaps(W); % attempt to fill holes left by transform
+    %W = cropEnd(W); % remove padding
 end

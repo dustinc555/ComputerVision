@@ -1,4 +1,4 @@
-function [W, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2, allowed_error, mode)
+function [W, WLEFT, WRIGHT, valid, h_error] = overlay(I1, I2, m1, m2, allowed_error, mode)
     %% get homography for warping m2 with respect to m1 space
     H = homography(m1, m2);
     W = [];
@@ -22,7 +22,8 @@ function [W, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2, allowed_error, mode
         x1_prime = double([m1(1, :)' ; 1]);
         x2_prime = double([m1(1, :)' ; 1]);
         valid = (~any(abs((x1 - x1_prime) ./ 2) > allowed_error)) && (~any(abs((x2 - x2_prime) ./ 2) > allowed_error));
-
+        h_error = abs((x1 - x1_prime) ./ 2) + abs((x2 - x2_prime) ./ 2);
+        
         if (~valid)
             return;
         end

@@ -5,8 +5,8 @@ function [m1, m2] = getCorrespondences_auto(I1, I2, n)
     I1 = rgb2gray(I1);
     I2 = rgb2gray(I2);
     
-    I1Points = detectHarrisFeatures(I1);
-    I2Points = detectHarrisFeatures(I2);
+    I1Points = detectSURFFeatures(I1);
+    I2Points = detectSURFFeatures(I2);
     
     [I1Features, I1ValidPoints] = extractFeatures(I1, I1Points);
     [I2Features, I2ValidPoints] = extractFeatures(I2, I2Points);

@@ -14,7 +14,7 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, allowed_image_error, allowed_map
        [m1, m2] = getCorrespondences_auto(I1, I2, 4);
        
        % warp
-       [W_new, WLEFT, WRIGHT, valid] = overlay(I1, I2, m1, m2, allowed_mapping_error, 'a');
+       [W_new, WLEFT, WRIGHT, valid, current_error] = overlay(I1, I2, m1, m2, allowed_mapping_error, 'a');
        
        if valid
            WLEFT = double(WLEFT);
@@ -25,6 +25,7 @@ function [W, WLEFT, WRIGHT] = RANSAC(I1, I2, n, allowed_image_error, allowed_map
            % assign max of inliers
            if best_error > current_error && allowed_image_error > current_error
               W = W_new; 
+              best_error = current_error;
            end
        end
     end
